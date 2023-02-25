@@ -12,6 +12,7 @@ import { JwtStrategy } from './strategies/jwt.strategy'
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   imports: [
+    UsersModule,
     PrismaModule,
     PassportModule,
     JwtModule.register({
@@ -19,9 +20,8 @@ import { JwtStrategy } from './strategies/jwt.strategy'
       signOptions: {
         expiresIn: '1h'
       }
-    }),
-    UsersModule
+    })
   ],
-  exports: [JwtModule]
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule {}

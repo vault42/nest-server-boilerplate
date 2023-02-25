@@ -1,10 +1,11 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { CreateUserDto } from 'src/users/dto/create-user.dto'
 import { UserEntity } from 'src/users/entities/user.entity'
 import { UsersService } from 'src/users/users.service'
 import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
+import JwtAuthGuard from './guards/jwt-auth.guard'
 import LocalAuthGuard from './guards/local-auth.guard'
 
 @ApiTags('Auth')
@@ -25,5 +26,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return req.user
   }
 }

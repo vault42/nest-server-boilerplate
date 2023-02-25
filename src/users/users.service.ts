@@ -18,7 +18,7 @@ export class UsersService {
     const { email, password } = createUserDto
     const existUser = await this.prisma.user.findUnique({ where: { email } })
     if (existUser) {
-      throw new HttpException('用户已存在', HttpStatus.BAD_REQUEST)
+      throw new HttpException('User already exist', HttpStatus.BAD_REQUEST)
     }
     const hashedPassword = bcrypt.hashSync(password, 10)
     createUserDto.password = hashedPassword
@@ -26,6 +26,7 @@ export class UsersService {
       createUserDto.role = 'USER'
     }
     const user = await this.prisma.user.create({ data: createUserDto })
+    delete user.password
     return user
   }
 
@@ -45,6 +46,10 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { email }
     })
+    if (!user) {
+      throw new NotFoundException(`User with ${email} does not exist.`)
+    }
+    delete user.password
     return user
   }
 
@@ -55,6 +60,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`User with ${id} does not exist.`)
     }
+    delete user.password
     return user
   }
 
