@@ -8,13 +8,13 @@ import * as bcrypt from 'bcryptjs'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { User } from './entities/user.entity'
+import { UserEntity } from './entities/user.entity'
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const { email, password } = createUserDto
     const existUser = await this.prisma.user.findUnique({ where: { email } })
     if (existUser) {
@@ -22,6 +22,9 @@ export class UsersService {
     }
     const hashedPassword = bcrypt.hashSync(password, 10)
     createUserDto.password = hashedPassword
+    if (!createUserDto.role) {
+      createUserDto.role = 'USER'
+    }
     const user = await this.prisma.user.create({ data: createUserDto })
     return user
   }

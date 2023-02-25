@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException
+} from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import * as bcrypt from 'bcryptjs'
 import { User } from '@prisma/client'
@@ -14,11 +19,15 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<Partial<User>> {
     const user = await this.prismaService.user.findUnique({ where: { email } })
-    if (user && bcrypt.compareSync(password, user.password)) {
-      const { password, ...result } = user
-      return result
+    if (!user) {
+      throw new UnauthorizedException('User not found')
     }
-    return null
+    const passwordMatch = bcrypt.compareSync(password, user.password)
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Password is wrong')
+    }
+    delete user.password
+    return user
   }
 
   async login(loginDto: LoginDto) {
