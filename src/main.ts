@@ -3,9 +3,12 @@ import { AppModule } from './app.module'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
 import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter'
+// import JwtAuthGuard from './auth/guards/jwt-auth.guard'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  // app.useGlobalGuards(new JwtAuthGuard())
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -25,5 +28,6 @@ async function bootstrap() {
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
 
   await app.listen(3001)
+  console.log(`Application is running on: ${await app.getUrl()}`)
 }
 bootstrap()

@@ -4,6 +4,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto'
 import { UserEntity } from 'src/users/entities/user.entity'
 import { UsersService } from 'src/users/users.service'
 import { AuthService } from './auth.service'
+import { Public } from './decorators/public.decorator'
 import { LoginDto } from './dto/login.dto'
 import JwtAuthGuard from './guards/jwt-auth.guard'
 import LocalAuthGuard from './guards/local-auth.guard'
@@ -16,12 +17,14 @@ export class AuthController {
     private readonly usersService: UsersService
   ) {}
 
+  @Public()
   @Post('register')
   @ApiCreatedResponse({ type: UserEntity })
   async register(@Body() registerDto: CreateUserDto) {
     return await this.usersService.create(registerDto)
   }
 
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
