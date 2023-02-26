@@ -7,9 +7,9 @@ import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-cl
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-
-  // app.useGlobalGuards(new JwtAuthGuard())
-
+  app.setGlobalPrefix('api', {
+    // exclude: ['']
+  })
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true
@@ -17,12 +17,12 @@ async function bootstrap() {
   )
   const config = new DocumentBuilder()
     .setTitle('Nest Server')
-    .setDescription('The Median API description')
+    .setDescription('The API Server Powered By Nest.js')
     .setVersion('0.1')
     .build()
 
   const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document)
+  SwaggerModule.setup('doc', app, document)
 
   const { httpAdapter } = app.get(HttpAdapterHost)
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
