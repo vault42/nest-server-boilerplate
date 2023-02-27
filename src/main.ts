@@ -2,14 +2,15 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
-import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter'
-// import JwtAuthGuard from './auth/guards/jwt-auth.guard'
+import { PrismaClientExceptionFilter } from './filters/prisma-client-exception.filter'
+import { TransformInterceptor } from './interceptors/transform.interception'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.setGlobalPrefix('api', {
     // exclude: ['']
   })
+  app.useGlobalInterceptors(new TransformInterceptor())
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true
