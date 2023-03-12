@@ -11,6 +11,11 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
+  username: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
   password: string
 
   @IsEnum(Role)
